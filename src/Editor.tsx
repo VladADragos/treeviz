@@ -9,12 +9,15 @@ import * as AceTypes from "react-ace/lib/types"
 import { Ace as AceBuildTypes } from "ace-builds/ace"
 const options: AceTypes.IAceOptions = {
     enableBasicAutocompletion: false,
-    showGutter: true,
+    // showGutter: true,
     enableLiveAutocompletion: false,
     enableMultiselect: true,
     enableSnippets: false,
     showLineNumbers: true,
-    tabSize: 2,
+    tabSize: 4,
+    showFoldWidgets: true,
+    showPrintMargin: true
+
 }
 
 interface Position {
@@ -43,7 +46,7 @@ const Errors: React.FC<ErrorsProps> = ({ errors }) => {
     return (
         <>
             {errors.map((error, index) => {
-                return (<div key={index}>ERROR: {error.message} at row: {error.position.row + 1}, column: {error.position.column + 1}</div>)
+                return (<p className='text-slate-50' key={index}>ERROR: {error.message} at row: {error.position.row + 1}, column: {error.position.column + 1}</p>)
             })}
         </>
     )
@@ -51,7 +54,7 @@ const Errors: React.FC<ErrorsProps> = ({ errors }) => {
 
 
 const Top: React.FC<TopProps> = ({ position }) => {
-    return <div>row: {position.row}, column: {position.column}</div>
+    return <div className='bg-neutral-700 text-right pr-3 border-t-2 border-neutral-900'> row: {position.row}, column: {position.column}</div>
 }
 
 const initalState = {
@@ -87,15 +90,14 @@ const Editor: React.FC<Props> = ({ getData }) => {
         getData(value)
     }
     return (
-        <div className='editor-container'>
-            {/* Row and Column */}
-            <Top position={position} />
-            {/* Editor */}
+        <div className='editor-container h-full bg-red-800 flex flex-col'>
+
             <AceEditor
                 placeholder="Placeholder Text"
                 mode="json"
                 theme="monokai"
                 name="blah2"
+                width="100%"
                 onLoad={(e) => getData(editorText)}
                 onChange={(e) => handleOnChange(e)}
                 onValidate={(error) => handleErrors(error)}
@@ -106,9 +108,10 @@ const Editor: React.FC<Props> = ({ getData }) => {
                 highlightActiveLine={true}
                 value={editorText}
                 setOptions={options} />
-
-            {/* errors   */}
-            <Errors errors={errors} />
+            <Top position={position} />
+            <div className=' bg-black flex-1'>
+                <Errors errors={errors} />
+            </div>
 
         </div>);
 }

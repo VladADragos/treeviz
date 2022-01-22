@@ -27,14 +27,22 @@ function App() {
 
   return (
     <div className="App">
-      <div className="h-screen w-screen flex justify-center items-center">
-        <div className="right h-full bg-slate-300 flex-1">
-          <Editor getData={setEditorString} />
-        </div>
-        <div className="left h-full bg-red-600 flex-1">
-          <Tree data={test()} translate={{ x: 250, y: 330 }} />
+      <div className="h-screen w-screen flex flex-col">
 
+        <div className="header  bg-stone-800">
+          <h1 className='py-3 pl-3 text-xl text-slate-100'>Treeviz</h1>
         </div>
+        <div className='flex h-full'>
+
+          <div className="right h-full bg-slate-300 flex-1 ">
+            <Editor getData={setEditorString} />
+          </div>
+          <div className="left h-full bg-stone-50 flex-1">
+            <Tree data={test()} translate={{ x: 250, y: 330 }} />
+          </div>
+        </div>
+
+
       </div>
     </div>
   );
