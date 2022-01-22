@@ -1,55 +1,38 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import Tree from 'react-d3-tree'
 import Editor from './Editor';
-
-const data = {
+const initalState = {
   name: "root",
   children: [
-    { name: "test" },
+    { name: "test1" },
     { name: "test2" },
 
   ]
 }
+
 function App() {
-  let [state, setState] = useState<any>(() => JSON.stringify(data))
-  let [error, setError] = useState<string>("");
-  let [treeData, setTreeData] = useState<any>(() => {
+
+
+  const [editorString, setEditorString] = useState<string>("");
+
+  function test() {
+    let x = { name: "json error" };
     try {
-      let x = JSON.parse(state);
-      return x;
+      x = JSON.parse(editorString);
     } catch (error) {
-      return {}
     }
-  })
 
-  console.log("rerender")
-  function update(newState: string) {
-
-
-    // let parsed = treeData;
-    setState(newState);
-    try {
-      let parsed = JSON.parse(newState);
-      setTreeData(parsed);
-      setError("");
-    } catch (error: any) {
-      let err = error as SyntaxError;
-      setError(err.message);
-      console.error(err.message)
-    }
-    // setTreeData(parsed);
+    return x;
   }
 
   return (
     <div className="App">
       <div className="h-screen w-screen flex justify-center items-center">
         <div className="right h-full bg-slate-300 flex-1">
-          {!(error === "") && <div>{error}</div>}
-          <Editor mutator={update} code={state} />
+          <Editor getData={setEditorString} />
         </div>
         <div className="left h-full bg-red-600 flex-1">
-          <Tree data={treeData} translate={{ x: 250, y: 330 }} />
+          <Tree data={test()} translate={{ x: 250, y: 330 }} />
 
         </div>
       </div>
