@@ -1,39 +1,59 @@
-import React, { useState } from 'react';
-import Tree from 'react-d3-tree'
+import React, { useState, useEffect } from 'react';
 import Editor from './components/Editor';
 import Split from 'react-split';
+import Tree from './components/Tree';
 
-const initalState = {
-  name: "root",
-  children: [
-    { name: "test1" },
-    { name: "test2" },
+import initSwc, { transformSync } from "@swc/wasm-web";
+import { useRecoilValue } from 'recoil';
+import EditorText from './recoil/selectors/EditorText';
 
-  ]
-}
+
+
+
+import { MenuIcon, ChevronDownIcon } from '@heroicons/react/solid';
+
+
+export const Navbar = () => {
+  return (<div className="header  bg-neutral-800 flex items-center justify-between py-3 px-3">
+    <h1 className=' text-xl text-slate-100'>Treeviz </h1> <button className='hover:bg-neutral-700 '><MenuIcon className='m-2 h-5 w-5 text-slate-100 ' /></button>
+  </div>)
+};
+
+
 
 function App() {
 
+  const [initialized, setInitialized] = useState(false);
+  const editorText = useRecoilValue(EditorText)
+  const [res, setRes] = useState<any>(null);
 
-  const [editorString, setEditorString] = useState<string>("");
 
-  function test() {
-    let x = { name: "json error" };
-    try {
-      x = JSON.parse(editorString);
-    } catch (error) {
+
+  useEffect(() => {
+    console.log("render");
+  })
+  useEffect(() => {
+    async function importAndRunSwcOnMount() {
+      await initSwc();
+      setInitialized(true);
+    }
+    importAndRunSwcOnMount();
+  }, []);
+  function compile() {
+    if (!initialized) {
+      return;
     }
 
-    return x;
+    const { code } = transformSync(editorText, {});
+    setRes(eval(code))
   }
+
 
   return (
     <div className="App">
       <div className="h-screen w-screen flex flex-col">
 
-        <div className="header  bg-neutral-800">
-          <h1 className='py-3 pl-3 text-xl text-slate-100'>Treeviz</h1>
-        </div>
+        <Navbar />
 
         <Split
           gutterSize={5}
@@ -44,10 +64,10 @@ function App() {
           className='flex flex-1'
         >
 
-          <Editor getData={setEditorString} />
+          <Editor />
 
           <div className="left h-full bg-slate-300 ">
-            <Tree data={test()} translate={{ x: 250, y: 330 }} />
+            <Tree />
           </div>
         </Split>
 

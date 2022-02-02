@@ -1,143 +1,115 @@
 import React, { useState } from 'react';
-import AceEditor from "react-ace";
-import "ace-builds/webpack-resolver";
-import "ace-builds/src-noconflict/worker-json";
-import "ace-builds/src-noconflict/worker-css";
-import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-monokai";
-import * as AceTypes from "react-ace/lib/types";
-import { Ace as AceBuildTypes } from "ace-builds/ace";
 import useLocalStorage from '../hooks/LocalStorage';
+import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import Split from 'react-split';
-const options: AceTypes.IAceOptions = {
-    // enableBasicAutocompletion: false,
-    // showGutter: true,
-    // enableLiveAutocompletion: false,
-    // enableMultiselect: true,
-    // enableSnippets: false,
-    showLineNumbers: true,
-    tabSize: 4,
-    // showFoldWidgets: false,
-    showPrintMargin: false,
-    printMarginColumn: 50,
-    // scrollPastEnd: true,
-    scrollSpeed: 2,
-    animatedScroll: true,
-    hScrollBarAlwaysVisible: true,
-    autoScrollEditorIntoView: false
+import { useRecoilState } from 'recoil';
+import EditorState from '../recoil/atoms/EditorState';
+import { ChevronDownIcon, ArrowsExpandIcon } from '@heroicons/react/solid';
 
-
-
-}
-
-interface Position {
-    row: number,
-    column: number
-}
 interface Props {
-    getData: React.Dispatch<string>
-}
-interface Error {
-    position: Position,
-    message: string
+
 }
 
 interface ErrorsProps {
-    errors: Error[]
+    errors: EditorError[]
 }
 
-interface TopProps {
-    position: Position
+interface BarProps {
+    position: Position,
+    onCollapse: () => void,
+    collapsed: boolean
 }
 
 
 const Errors: React.FC<ErrorsProps> = ({ errors }) => {
     return (
-        <>
+        <div className=' bg-neutral-800 bottompane'>
             {errors.map((error, index) => {
-                return (<p className='text-slate-50' key={index}>ERROR: {error.message} at row: {error.position.row + 1}, column: {error.position.column + 1}</p>)
+                return (<p className='text-slate-50' key={index}>ERROR: {error.message} at row: {error.position.row}, column: {error.position.column}</p>)
             })}
-        </>
+        </div>
     )
 }
 
 
-const Top: React.FC<TopProps> = ({ position }) => {
-    return <div className='bg-neutral-700 text-right pr-3 border-t-2 border-neutral-900 text-neutral-300'> row: {position.row}, column: {position.column}</div>
+const Bar: React.FC<BarProps> = ({ position, onCollapse, collapsed }) => {
+    return (
+        <div className='bg-neutral-700 flex items-center justify-between pr-3 border-t-2 border-neutral-900 text-neutral-300'>
+            <button className='p-1 hover:bg-neutral-900' onClick={onCollapse}>
+                {collapsed ? <ChevronDownIcon className='h-5 w-5 text-neutral-300' /> : <ArrowsExpandIcon className='h-5 w-5 text-neutral-300' />}
+            </button>  row: {position.row}, column: {position.column}
+        </div >)
 }
 
-const initalState = {
-    name: "root",
-    children: [
-        { name: "test1" },
-        { name: "test2" },
 
-    ]
-}
 
-const Editor: React.FC<Props> = ({ getData }) => {
+const Editor: React.FC<Props> = () => {
 
     const [position, setPosition] = useState<Position>({ row: 0, column: 0 })
-    const [editorText, setEditorText] = useLocalStorage("ace-editor-text", JSON.stringify(initalState));
-    const [errors, setErrors] = useState<Error[]>([])
-    // const [test, setSet] = 
-    function handleErrors(error: AceBuildTypes.Annotation[]) {
+    const [editorState, setEditorState] = useRecoilState(EditorState);
+    const [showErrors, setShowErrors] = useState(true);
+    function handleErrors(error: any) {
         if (error.length > 0) {
-            setErrors(
-                error.map((el) => {
-                    return { position: { column: el.column ? el.column : 0, row: el.row ? el.row : 0 }, message: el.text }
-                }
-                )
+            setEditorState({
+                ...editorState, errors:
+                    error.map(({ message, endColumn, endLineNumber }: { message: string, endColumn: number, endLineNumber: number }) => {
+                        return { position: { column: endColumn, row: endLineNumber }, message: message }
+                    }
+                    )
+            }
             )
         } else {
-            setErrors([])
+            setEditorState({ ...editorState, errors: [] });
         }
     }
 
-    function handleOnChange(value: string) {
-        setEditorText(value)
-        getData(value)
+    function handleOnChange(text: string) {
+        setEditorState({ ...editorState, text });
     }
-    function handleFormat(e: React.KeyboardEvent<HTMLDivElement>) {
-        if (e.ctrlKey && e.shiftKey && e.code === "KeyF") {
-            setEditorText(JSON.stringify(JSON.parse(editorText), null, 4))
-        }
-        console.log(e);
+
+    function bindClass(state: boolean, cssClass: string): string {
+        return state ? cssClass : "";
+    }
+    function useClassNames(...args: string[]): string {
+        return args.join(" ");
     }
     return (
-        <div className='h-full testtest bg-stone-900'>
+        <div className=' bg-stone-900 grid grid-rows-3'>
+            <div className={useClassNames('flex flex-col', showErrors ? 'row-span-2' : 'row-span-3')}>
+                <div className='h-full bg-[#1e1e1e]'>
 
+                    <MonacoEditor
+                        onMount={(editor) => { editor.onDidChangeCursorPosition(e => setPosition({ row: e.position.lineNumber, column: e.position.column })) }}
+                        options={{
+                            tabSize: 4,
+                            tabCompletion: "on",
+                            columnSelection: true,
+                            minimap: { enabled: false },
+                            suggestSelection: "recentlyUsedByPrefix",
 
-            <Split direction='vertical' sizes={[50, 50]} collapsed={50} minSize={[450, 0]} gutterSize={5} gutterAlign='center' className=' bg-stone-900 h-full' onKeyDown={(e) => handleFormat(e)}>
-                <div className='bg-teal-300 toppane'>
-                    <div className='h-full flex flex-col'>
-
-                        <AceEditor
-                            className=''
-                            placeholder="Placeholder Text"
-                            mode="json"
-                            theme="monokai"
-                            name="blah2"
-                            height='100%'
-                            width='100%'
-                            onLoad={(e) => getData(editorText)}
-                            onChange={(e) => handleOnChange(e)}
-                            onValidate={(error) => handleErrors(error)}
-                            onCursorChange={({ cursor }) => { setPosition({ column: cursor.column + 1, row: cursor.row + 1 }) }}
-                            fontSize={14}
-                            showPrintMargin={true}
-                            showGutter={true}
-                            highlightActiveLine={true}
-                            value={editorText}
-                            setOptions={options} />
-                        <Top position={position} />
-                    </div>
+                        }}
+                        height={"90%"}
+                        width={"100%"}
+                        defaultLanguage="json"
+                        language="json"
+                        defaultValue=""
+                        theme="vs-dark"
+                        value={editorState.text}
+                        onChange={(s) => { if (s) handleOnChange(s) }}
+                        onValidate={(e) => {
+                            handleErrors(e);
+                        }}
+                    />
                 </div>
-                <div className=' bg-neutral-800 bottompane'>
-                    <Errors errors={errors} />
-                </div>
+                {/* todo fix names, collapse showErrors, maybe figure out a better way to handle the state */}
+                <Bar position={position} collapsed={showErrors} onCollapse={() => setShowErrors(!showErrors)} />
+            </div>
+            {
+                showErrors && <Errors errors={editorState.errors} />
+            }
 
-            </Split>
+
+
         </div>);
 }
 export default Editor;

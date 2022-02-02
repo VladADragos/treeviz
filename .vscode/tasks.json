@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install",
+			"problemMatcher": [],
+			"label": "pnpm: install",
+			"detail": "pnpm i"
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "npm: start",
+			"detail": "pnpm react-scripts start"
+		}
+	]
+}
