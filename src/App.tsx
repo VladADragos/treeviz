@@ -1,62 +1,38 @@
-import React, { useState } from 'react';
-import Tree from 'react-d3-tree'
+import {
+	Box,
+	extendTheme,
+	Flex,
+	Grid,
+	GridItem,
+	SimpleGrid,
+	Stack
+} from '@chakra-ui/react';
+import initSwc, { transformSync } from '@swc/wasm-web';
+import React, { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import Editor from './components/Editor';
-import Split from 'react-split';
+import Navbar from './components/Navbar';
+import Tree from './components/Tree';
+import EditorText from './recoil/selectors/EditorText';
 
-const initalState = {
-  name: "root",
-  children: [
-    { name: "test1" },
-    { name: "test2" },
-
-  ]
-}
+// import {MenuIcon} from 'hiero'
 
 function App() {
-
-
-  const [editorString, setEditorString] = useState<string>("");
-
-  function test() {
-    let x = { name: "json error" };
-    try {
-      x = JSON.parse(editorString);
-    } catch (error) {
-    }
-
-    return x;
-  }
-
-  return (
-    <div className="App">
-      <div className="h-screen w-screen flex flex-col">
-
-        <div className="header  bg-neutral-800">
-          <h1 className='py-3 pl-3 text-xl text-slate-100'>Treeviz</h1>
-        </div>
-
-        <Split
-          gutterSize={5}
-          // minSize={500}
-          direction='horizontal'
-          sizes={[50, 50]}
-          collapsed={500}
-          className='flex flex-1'
-        >
-
-          <Editor getData={setEditorString} />
-
-          <div className="left h-full bg-slate-300 ">
-            <Tree data={test()} translate={{ x: 250, y: 330 }} />
-          </div>
-        </Split>
-
-
-
-
-      </div>
-    </div>
-  );
+	return (
+		<>
+			<Flex flexDir='column' h='100vh' bg='teal.500' wrap='nowrap'>
+				<Navbar />
+				<Flex flexGrow={1} overflow='hidden'>
+					<Box flex={1} overflow='hidden'>
+						<Editor />
+					</Box>
+					<Box flex={1}>
+						<Tree />
+					</Box>
+				</Flex>
+			</Flex>
+		</>
+	);
 }
 
 export default App;

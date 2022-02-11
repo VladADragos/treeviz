@@ -1,0 +1,33 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "install",
+			"problemMatcher": [],
+			"label": "pnpm: install",
+			"detail": "pnpm i"
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "pnpm: start",
+			"detail": "ppnpm react-scripts start"
+		},
+		{
+			"type": "npm",
+			"script": "lint",
+			"problemMatcher": [],
+			"label": "pnpm: lint",
+			"detail": "eslint --ext .js,.ts,.tsx src/"
+		},
+		{
+			"type": "npm",
+			"script": "format",
+			"problemMatcher": [],
+			"label": "npm: format",
+			"detail": "prettier --write 'src/**/*.{ts,tsx,js,jsx}'"
+		}
+	]
+}
