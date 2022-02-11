@@ -1,15 +1,15 @@
 interface Position {
-    row: number,
-    column: number
+	row: number;
+	column: number;
 }
 
 interface EditorError {
-    message: string;
-    position: Position;
+	message: string;
+	position: Position;
 }
 interface EditorState {
-    text: string;
-    errors: EditorError[]
+	text: string;
+	errors: EditorError[];
 }
 
 type Nullable<T> = T | null;

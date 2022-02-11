@@ -1,10 +1,16 @@
 {
   "name": "test",
   "version": "0.1.0",
+  "description": "",
+  "license": "apache-2.0",
   "private": true,
   "dependencies": {
+    "@babel/core": "^7.17.2",
     "@babel/plugin-syntax-flow": "^7.16.7",
     "@babel/plugin-transform-react-jsx": "^7.16.7",
+    "@chakra-ui/react": "^1.8.3",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@heroicons/react": "^1.0.5",
     "@monaco-editor/react": "^4.3.1",
     "@shopify/react-web-worker": "^4.0.4",
@@ -18,8 +24,11 @@
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
     "ace-builds": "^1.4.13",
+    "autoprefixer": "^10.4.2",
+    "framer-motion": "^5",
     "monaco-editor": "^0.31.1",
     "only-allow": "^1.0.0",
+    "postcss": "^8.4.6",
     "react": "^17.0.2",
     "react-ace": "^9.5.0",
     "react-d3-tree": "^3.2.1",
@@ -35,7 +44,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --fix --fix-type suggestion ",
+    "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx}'"
   },
   "eslintConfig": {
     "extends": [
@@ -56,8 +67,14 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.5",
-    "tailwindcss": "^3.0.15"
+    "@github/prettier-config": "^0.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "^5.11.0",
+    "eslint": "^8.8.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.28.0",
+    "prettier": "^2.5.1"
   }
 }

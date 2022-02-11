@@ -1,82 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import Editor from './components/Editor';
-import Split from 'react-split';
-import Tree from './components/Tree';
-
-import initSwc, { transformSync } from "@swc/wasm-web";
+import { GridItem, SimpleGrid, Stack } from '@chakra-ui/react';
+import initSwc, { transformSync } from '@swc/wasm-web';
+import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import Editor from './components/Editor';
+import Navbar from './components/Navbar';
+import Tree from './components/Tree';
 import EditorText from './recoil/selectors/EditorText';
-
-
-
-
-import { MenuIcon, ChevronDownIcon } from '@heroicons/react/solid';
-
-
-export const Navbar = () => {
-  return (<div className="header  bg-neutral-800 flex items-center justify-between py-3 px-3">
-    <h1 className=' text-xl text-slate-100'>Treeviz </h1> <button className='hover:bg-neutral-700 '><MenuIcon className='m-2 h-5 w-5 text-slate-100 ' /></button>
-  </div>)
-};
-
-
+// import {MenuIcon} from 'hiero'
 
 function App() {
+	const [initialized, setInitialized] = useState(false);
+	const editorText = useRecoilValue(EditorText);
+	const [res, setRes] = useState<any>(null);
 
-  const [initialized, setInitialized] = useState(false);
-  const editorText = useRecoilValue(EditorText)
-  const [res, setRes] = useState<any>(null);
+	useEffect(() => {
+		console.log('render');
+	});
+	useEffect(() => {
+		async function importAndRunSwcOnMount() {
+			await initSwc();
+			setInitialized(true);
+		}
+		importAndRunSwcOnMount();
+	}, []);
+	function compile() {
+		if (!initialized) {
+			return;
+		}
 
+		const { code } = transformSync(editorText, {});
+		setRes(eval(code));
+	}
 
+	return (
+		<>
+			<Stack spacing={0} h='100vh' bg='teal.500'>
+				<Navbar />
 
-  useEffect(() => {
-    console.log("render");
-  })
-  useEffect(() => {
-    async function importAndRunSwcOnMount() {
-      await initSwc();
-      setInitialized(true);
-    }
-    importAndRunSwcOnMount();
-  }, []);
-  function compile() {
-    if (!initialized) {
-      return;
-    }
+				<SimpleGrid columns={2} h='full'>
+					<GridItem>
+						<Editor />
+					</GridItem>
 
-    const { code } = transformSync(editorText, {});
-    setRes(eval(code))
-  }
-
-
-  return (
-    <div className="App">
-      <div className="h-screen w-screen flex flex-col">
-
-        <Navbar />
-
-        <Split
-          gutterSize={5}
-          // minSize={500}
-          direction='horizontal'
-          sizes={[50, 50]}
-          collapsed={500}
-          className='flex flex-1'
-        >
-
-          <Editor />
-
-          <div className="left h-full bg-slate-300 ">
-            <Tree />
-          </div>
-        </Split>
-
-
-
-
-      </div>
-    </div>
-  );
+					<GridItem>
+						<Tree />
+						{/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam similique ratione quisquam ipsum in culpa quis explicabo quidem tempora. Labore! */}
+					</GridItem>
+				</SimpleGrid>
+			</Stack>
+		</>
+	);
 }
 
 export default App;
