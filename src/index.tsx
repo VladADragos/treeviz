@@ -4,11 +4,12 @@ import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import App from './App';
 import './index.css';
-
+import theme from './theme/theme';
 ReactDOM.render(
 	<React.StrictMode>
 		<RecoilRoot>
-			<ChakraProvider>
+			<ChakraProvider theme={theme}>
+				{/* todo: make a custom color theme */}
 				<App />
 			</ChakraProvider>
 		</RecoilRoot>

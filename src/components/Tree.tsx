@@ -8,7 +8,11 @@ const Tree = () => {
 	const data = useRecoilValue(treeData);
 	return (
 		<Box height='100%' width='100%' backgroundColor='gray.200'>
-			<D3Tree data={data} translate={{ x: 250, y: 330 }} />
+			<D3Tree
+				orientation='vertical'
+				data={data}
+				translate={{ x: 400, y: 20 }}
+			/>
 		</Box>
 	);
 };

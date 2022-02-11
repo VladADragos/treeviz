@@ -16,7 +16,11 @@ import {
 } from '@chakra-ui/react';
 import { MenuIcon } from '@heroicons/react/solid';
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import EditorState from '../recoil/atoms/EditorState';
+import BST from '../trees/BST';
 const Navbar = () => {
+	const [editorState, setEditorState] = useRecoilState(EditorState);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	return (
 		<Box bg='blue.700'>
@@ -43,13 +47,37 @@ const Navbar = () => {
 							</DrawerHeader>
 							<DrawerBody>
 								<Stack spacing='4'>
-									<Button width='full'>
+									<Button
+										width='full'
+										onClick={() => {
+											setEditorState({
+												...editorState,
+												text: BST
+											});
+										}}
+									>
 										<Text>Trie</Text>
 									</Button>
-									<Button width='full'>
+									<Button
+										width='full'
+										onClick={() => {
+											setEditorState({
+												...editorState,
+												text: BST
+											});
+										}}
+									>
 										<Text>Kdtree</Text>
 									</Button>
-									<Button width='full'>
+									<Button
+										width='full'
+										onClick={() => {
+											setEditorState({
+												...editorState,
+												text: BST
+											});
+										}}
+									>
 										<Text>BST</Text>
 									</Button>
 								</Stack>

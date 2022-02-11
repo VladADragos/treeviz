@@ -1,5 +1,17 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { ArrowsExpandIcon, ChevronDownIcon } from '@heroicons/react/solid';
+import {
+	Box,
+	Flex,
+	Grid,
+	GridItem,
+	Icon,
+	SimpleGrid,
+	Text
+} from '@chakra-ui/react';
+import {
+	ArrowsExpandIcon,
+	ChevronDownIcon,
+	ExclamationIcon
+} from '@heroicons/react/solid';
 import MonacoEditor from '@monaco-editor/react';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -11,37 +23,56 @@ interface ErrorsProps {
 
 interface BarProps {
 	position: Position;
+	numErrors: number;
 }
 
 const Errors: React.FC<ErrorsProps> = ({ errors }) => {
 	return (
-		<div className=' bg-neutral-800 bottompane'>
+		<Box>
 			{errors.map((error, index) => {
 				return (
-					<p className='text-slate-50' key={index}>
-						ERROR: {error.message} at row: {error.position.row},
-						column: {error.position.column}
-					</p>
+					<Flex key={index} alignItems='center' ml='2' mb='1'>
+						<Icon
+							as={ExclamationIcon}
+							color='red.900'
+							fontSize='medium'
+						/>
+						<Text
+							fontSize='small'
+							fontWeight='medium'
+							color='white'
+							ml='1'
+						>
+							{error.message} [{error.position.row},
+							{error.position.column}]
+						</Text>
+					</Flex>
 				);
 			})}
-		</div>
+		</Box>
 	);
 };
 
-const Bar: React.FC<BarProps> = ({ position }) => {
+const Bar: React.FC<BarProps> = ({ position, numErrors }) => {
 	return (
-		<Box bg='gray.700'>
-			<Text textAlign='right' mr='2' color='gray.400'>
+		<Flex
+			bg='gray.900'
+			borderBottom='2px'
+			borderColor='gray.900'
+			justifyContent='space-between'
+			px='1'
+		>
+			<Text color='gray.400'>Errors: {numErrors}</Text>
+			<Text color='gray.400'>
 				row: {position.row}, column: {position.column}
 			</Text>
-		</Box>
+		</Flex>
 	);
 };
 
 const Editor: React.FC = () => {
 	const [position, setPosition] = useState<Position>({ row: 0, column: 0 });
 	const [editorState, setEditorState] = useRecoilState(EditorState);
-	const [showErrors, setShowErrors] = useState(true);
 	function handleErrors(error: any) {
 		if (error.length > 0) {
 			setEditorState({
@@ -72,11 +103,14 @@ const Editor: React.FC = () => {
 		setEditorState({ ...editorState, text });
 		localStorage.setItem(localStorageKey, text);
 	}
-
+	const [n, setN] = useState(4);
 	return (
-		<Flex flexDir='column' height='full' bg='gray.800'>
-			<Flex flexDir='column' h='full' alignContent='baseline'>
-				<Box h='full' flex='2'>
+		<Grid bg='gray.800' h='full' gridTemplateRows='repeat(4,1fr)'>
+			<GridItem rowSpan={3}>
+				{/* <Text fontSize='4xl' color='white'>
+					Editor
+				</Text> */}
+				<Flex h='full' flexDir='column'>
 					<MonacoEditor
 						onMount={editor => {
 							editor.onDidChangeCursorPosition(e =>
@@ -93,12 +127,12 @@ const Editor: React.FC = () => {
 							minimap: { enabled: false },
 							suggestSelection: 'recentlyUsedByPrefix'
 						}}
-						height={'100%'}
-						width={'100%'}
+						loading={<Box>loading...</Box>}
 						defaultLanguage='json'
 						language='json'
 						defaultValue=''
 						theme='vs-dark'
+						// spinner={}
 						value={editorState.text}
 						onChange={s => {
 							if (s) handleOnChange(s);
@@ -107,13 +141,22 @@ const Editor: React.FC = () => {
 							handleErrors(e);
 						}}
 					/>
-				</Box>
-				<Box flex='1'>
-					<Bar position={position} />
-					{showErrors && <Errors errors={editorState.errors} />}
-				</Box>
-			</Flex>
-		</Flex>
+					<Bar
+						position={position}
+						numErrors={editorState.errors.length}
+					/>
+				</Flex>
+			</GridItem>
+
+			<GridItem
+				// flex={1}
+				overflow='hidden'
+				bg='gray.700'
+				overflowY='scroll'
+			>
+				<Errors errors={editorState.errors} />
+			</GridItem>
+		</Grid>
 	);
 };
 export default Editor;
