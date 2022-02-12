@@ -40,7 +40,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "preinstall": "only-allow pnpm",
+    "preinstall": "[ \"$NODE_ENV\" = production ] && exit 0; npx only-allow pnpm",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
