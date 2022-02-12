@@ -1,22 +1,9 @@
-import {
-	Box,
-	Flex,
-	Grid,
-	GridItem,
-	Icon,
-	SimpleGrid,
-	Text
-} from '@chakra-ui/react';
-import {
-	ArrowsExpandIcon,
-	ChevronDownIcon,
-	ExclamationIcon
-} from '@heroicons/react/solid';
+import { Box, Flex, Grid, GridItem, Icon, Text } from '@chakra-ui/react';
+import { ExclamationIcon } from '@heroicons/react/solid';
 import MonacoEditor from '@monaco-editor/react';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import EditorState, { localStorageKey } from '../recoil/atoms/EditorState';
-
 interface ErrorsProps {
 	errors: EditorError[];
 }
@@ -32,19 +19,9 @@ const Errors: React.FC<ErrorsProps> = ({ errors }) => {
 			{errors.map((error, index) => {
 				return (
 					<Flex key={index} alignItems='center' ml='2' mb='1'>
-						<Icon
-							as={ExclamationIcon}
-							color='red.900'
-							fontSize='medium'
-						/>
-						<Text
-							fontSize='small'
-							fontWeight='medium'
-							color='white'
-							ml='1'
-						>
-							{error.message} [{error.position.row},
-							{error.position.column}]
+						<Icon as={ExclamationIcon} color='red.900' fontSize='medium' />
+						<Text fontSize='small' fontWeight='medium' color='white' ml='1'>
+							{error.message} [{error.position.row},{error.position.column}]
 						</Text>
 					</Flex>
 				);
@@ -69,41 +46,37 @@ const Bar: React.FC<BarProps> = ({ position, numErrors }) => {
 		</Flex>
 	);
 };
-
 const Editor: React.FC = () => {
 	const [position, setPosition] = useState<Position>({ row: 0, column: 0 });
 	const [editorState, setEditorState] = useRecoilState(EditorState);
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function handleErrors(error: any) {
-		if (error.length > 0) {
-			setEditorState({
-				...editorState,
-				errors: error.map(
-					({
-						message,
-						endColumn,
-						endLineNumber
-					}: {
-						message: string;
-						endColumn: number;
-						endLineNumber: number;
-					}) => {
-						return {
-							position: { column: endColumn, row: endLineNumber },
-							message: message
-						};
-					}
-				)
-			});
-		} else {
-			setEditorState({ ...editorState, errors: [] });
-		}
+		setEditorState({
+			...editorState,
+			errors: error.map(
+				({
+					message,
+					endColumn,
+					endLineNumber
+				}: {
+					message: string;
+					endColumn: number;
+					endLineNumber: number;
+				}) => {
+					return {
+						position: { column: endColumn, row: endLineNumber },
+						message: message
+					};
+				}
+			)
+		});
 	}
 
 	function handleOnChange(text: string) {
 		setEditorState({ ...editorState, text });
 		localStorage.setItem(localStorageKey, text);
 	}
-	const [n, setN] = useState(4);
 	return (
 		<Grid bg='gray.800' h='full' gridTemplateRows='repeat(4,1fr)'>
 			<GridItem rowSpan={3}>
@@ -141,10 +114,7 @@ const Editor: React.FC = () => {
 							handleErrors(e);
 						}}
 					/>
-					<Bar
-						position={position}
-						numErrors={editorState.errors.length}
-					/>
+					<Bar position={position} numErrors={editorState.errors.length} />
 				</Flex>
 			</GridItem>
 

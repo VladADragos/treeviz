@@ -1,3 +1,3 @@
-export function hello(code: string) {
-	return "from worker";
+export function hello() {
+	return 'from worker';
 }

@@ -39,10 +39,7 @@ const Navbar = () => {
 						<DrawerOverlay />
 						<DrawerContent>
 							<DrawerCloseButton />
-							<DrawerHeader
-								borderBottom='1px'
-								borderBottomColor='gray.200'
-							>
+							<DrawerHeader borderBottom='1px' borderBottomColor='gray.200'>
 								Tree Types
 							</DrawerHeader>
 							<DrawerBody>
@@ -85,12 +82,7 @@ const Navbar = () => {
 						</DrawerContent>
 					</Drawer>
 				</>
-				<Text
-					fontSize='3xl'
-					fontFamily='mono'
-					fontWeight='semibold'
-					color='gray.100'
-				>
+				<Text fontSize='3xl' fontFamily='mono' fontWeight='semibold' color='gray.100'>
 					TreeViz
 				</Text>
 			</Flex>

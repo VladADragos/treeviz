@@ -1,19 +1,8 @@
-import {
-	Box,
-	extendTheme,
-	Flex,
-	Grid,
-	GridItem,
-	SimpleGrid,
-	Stack
-} from '@chakra-ui/react';
-import initSwc, { transformSync } from '@swc/wasm-web';
-import React, { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { Box, Flex } from '@chakra-ui/react';
+import React from 'react';
 import Editor from './components/Editor';
 import Navbar from './components/Navbar';
 import Tree from './components/Tree';
-import EditorText from './recoil/selectors/EditorText';
 
 // import {MenuIcon} from 'hiero'
 

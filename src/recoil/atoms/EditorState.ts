@@ -7,9 +7,7 @@ const initalState = {
 const localStoragePrefix = 'TREEVIZ-';
 export const localStorageKey = localStoragePrefix + 'editorText';
 const localStorageTreeData = window.localStorage.getItem(localStorageKey);
-const atomDefault = localStorageTreeData
-	? localStorageTreeData
-	: JSON.stringify(initalState);
+const atomDefault = localStorageTreeData ? localStorageTreeData : JSON.stringify(initalState);
 
 const EditorState = atom<EditorState>({
 	key: 'EditorState',
